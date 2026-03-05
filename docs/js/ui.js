@@ -7,7 +7,7 @@ const ColombiaUI = (() => {
     let currentYear = 1985;
     let playing = false;
     let timer = null;
-    let intervalMs = 900;
+    let intervalMs = 1600; // Slower default (1x) so narrative is readable
     let onYearChange = null;
 
     // ── Number animation

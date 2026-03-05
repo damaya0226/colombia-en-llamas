@@ -130,10 +130,14 @@ const ColombiaMap = (() => {
 
         map.on('mouseenter', 'conflict-core', (e) => {
             map.getCanvas().style.cursor = 'pointer';
-            const { zone, weight } = e.features[0].properties;
-            const victims = Math.round(weight * 3500);
+            const { zone, municipio, depto, weight } = e.features[0].properties;
+
+            // If from real API it has municipio/depto, if from mock it has zone
+            const locationName = municipio && depto ? `${municipio}, ${depto}` : (zone || 'Desconocido');
+            const victims = Math.round(weight * 3500); // Mock approximation for weight intensity
+
             tooltip.innerHTML = `
-        <div class="tooltip-title">⚔️ ${zone}</div>
+        <div class="tooltip-title">⚔️ ${locationName}</div>
         <div class="tooltip-row">Víctimas aprox: <span>~${victims.toLocaleString('es-CO')}</span></div>
         <div class="tooltip-row">Intensidad: <span>${(weight * 100).toFixed(0)}%</span></div>
       `;
