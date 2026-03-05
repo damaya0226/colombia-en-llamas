@@ -386,7 +386,11 @@ body {
 }
 
 .ldot.defo {
-  background: var(--defo);
+  background: var(--text-dim);
+}
+
+.ldot.deptos {
+  background: var(--text-dim);
 }
 
 .layer-btn.active .ldot.conflict {
@@ -398,7 +402,13 @@ body {
 }
 
 .layer-btn.active .ldot.defo {
-  box-shadow: 0 0 8px var(--defo-glow);
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.layer-btn.active .ldot.deptos {
+  background: #a855f7;
+  box-shadow: 0 0 8px #a855f7;
 }
 
 /* Timeline */
@@ -574,4 +584,110 @@ body {
 
 .maplibregl-canvas {
   border-radius: 0;
+}
+
+/* ── Responsive Design (Mobile) ────────────────── */
+@media (max-width: 768px) {
+  .header-panel {
+    top: 10px;
+    padding: 12px 16px;
+    width: calc(100% - 20px);
+    white-space: normal;
+  }
+
+  .header-title {
+    font-size: 2rem;
+    letter-spacing: 2px;
+  }
+
+  .header-sub {
+    font-size: 10px;
+  }
+
+  .narrative-panel {
+    top: auto;
+    bottom: 210px;
+    /* Above controls panel */
+    left: 10px;
+    width: calc(100% - 20px);
+    padding: 12px 16px;
+  }
+
+  .narrative-title {
+    font-size: 1.4rem;
+  }
+
+  .narrative-text {
+    font-size: 12px;
+    min-height: 48px;
+  }
+
+  .stats-panel {
+    top: 90px;
+    left: 10px;
+    right: auto;
+    width: calc(100% - 20px);
+    transform: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 12px 16px;
+  }
+
+  .stats-title {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .stat-block {
+    padding: 4px 0;
+    width: 48%;
+    /* fit two per row */
+  }
+
+  .stat-sep {
+    display: none;
+  }
+
+  .controls-panel {
+    bottom: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+    padding: 14px;
+  }
+
+  .layer-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .layer-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+    min-width: 48%;
+    justify-content: center;
+  }
+
+  .playback-row {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .speed-group {
+    display: none;
+    /* Hide speed controls on mobile */
+  }
+
+  .play-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  #year-wm {
+    font-size: 20vw;
+  }
+
+  .sources-bar {
+    display: none;
+  }
 }
