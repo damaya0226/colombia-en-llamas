@@ -96,39 +96,79 @@ const ColombiaMap = (() => {
 
         // ── Department Polygons
         if (layerVis.deptos && deptosGeoJSON) {
+            // Zone names from mock data → department names as they appear in NOMBRE_DPT
+            const ZONE_TO_DEPTO = {
+                'Urabá': 'ANTIOQUIA',
+                'Bajo Cauca': 'ANTIOQUIA',
+                'Córdoba': 'CÓRDOBA',
+                'Chocó': 'CHOCÓ',
+                'Catatumbo': 'NORTE DE SANTANDER',
+                'Arauca': 'ARAUCA',
+                'Sur de Bolívar': 'BOLÍVAR',
+                'Oriente Ant.': 'ANTIOQUIA',
+                'Putumayo': 'PUTUMAYO',
+                'Nariño': 'NARIÑO',
+                'Cauca': 'CAUCA',
+                'Meta': 'META',
+                'Caquetá': 'CAQUETÁ',
+                'Sierra Nevada': 'MAGDALENA',
+                'La Guajira': 'LA GUAJIRA',
+                'Putumayo Selva': 'PUTUMAYO',
+                'Antioquia': 'ANTIOQUIA',
+                'Guainía': 'GUAINÍA',
+                'Vichada': 'VICHADA',
+                'Caquetá Amazónico': 'CAQUETÁ',
+                'Meta Amazónico': 'META',
+                'Guaviare': 'GUAVIARE',
+                'Amazonas Norte': 'AMAZONAS',
+                'Chocó Pacífico': 'CHOCÓ',
+                'Norte Santander': 'NORTE DE SANTANDER',
+                'Vichada Sur': 'VICHADA',
+            };
+
+            // Pass 1: Accumulate raw weights per department
+            const deptoWeights = {};
+            if (currentData.conflictGeoJSON) {
+                for (const pt of currentData.conflictGeoJSON.features) {
+                    const p = pt.properties;
+                    let targetDepto = null;
+                    if (p.depto) {
+                        targetDepto = p.depto.toUpperCase();
+                    } else if (p.zone) {
+                        targetDepto = ZONE_TO_DEPTO[p.zone] || null;
+                    }
+                    if (targetDepto) {
+                        deptoWeights[targetDepto] = (deptoWeights[targetDepto] || 0) + (p.weight || 0);
+                    }
+                }
+            }
+            // Pass 2: Find the max so we can relativize
+            const maxWeight = Math.max(0.001, ...Object.values(deptoWeights));
+
             layers.push(new deck.GeoJsonLayer({
                 id: 'deptos-poly',
                 data: deptosGeoJSON,
                 stroked: true,
                 filled: true,
                 lineWidthMinPixels: 1,
-                getLineColor: [255, 255, 255, 30],
+                getLineColor: [255, 255, 255, 40],
                 getFillColor: f => {
-                    const deptoName = f.properties.NOMBRE_DPT || '';
-                    let intensity = 0;
-                    if (currentData.conflictGeoJSON) {
-                        let sumWeight = 0;
-                        for (let pt of currentData.conflictGeoJSON.features) {
-                            const pProps = pt.properties;
-                            // API data has `depto: 'ANTIOQUIA'`
-                            if (pProps.depto && deptoName.includes(pProps.depto)) {
-                                sumWeight += pProps.weight;
-                            }
-                            // Mock data has `zone`, we lazily map if relevant
-                            else if (!pProps.depto && pProps.zone && deptoName.includes(pProps.zone.toUpperCase())) {
-                                sumWeight += pProps.weight;
-                            }
-                        }
-                        // Normalize intensity. Some areas might have sumWeight > 2.0 depending on data density
-                        intensity = Math.min(1.0, sumWeight / 2.5);
-                    }
-                    if (intensity === 0) return [0, 0, 0, 0];
-                    return [239, 68, 68, Math.round(intensity * 180)]; // Translucent red
+                    const nombre = (f.properties.NOMBRE_DPT || '').toUpperCase();
+                    const raw = deptoWeights[nombre] || 0;
+                    if (raw === 0) return [0, 0, 0, 0];
+                    // Use sqrt to spread the gradient (avoid all being at top)
+                    const intensity = Math.sqrt(raw / maxWeight);
+                    const alpha = Math.round(30 + intensity * 180); // 30–210
+                    // Gradient from orange (low) to deep red (high)
+                    const r = 239;
+                    const g = Math.round(100 * (1 - intensity)); // 100→0
+                    const b = 20;
+                    return [r, g, b, alpha];
                 },
                 updateTriggers: {
                     getFillColor: currentData.conflictGeoJSON
                 },
-                transitions: { getFillColor: 300 }
+                transitions: { getFillColor: 400 }
             }));
         }
 
