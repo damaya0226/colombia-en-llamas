@@ -36,6 +36,27 @@ const ColombiaUI = (() => {
         document.getElementById('stats-year').textContent = year;
         document.getElementById('year-wm').textContent = year;
 
+        // Update Narrative Panel
+        if (typeof ColombiaNarrative !== 'undefined' && ColombiaNarrative[year]) {
+            const data = ColombiaNarrative[year];
+            document.getElementById('narrative-year').textContent = year;
+
+            const titleEl = document.getElementById('narrative-title');
+            const textEl = document.getElementById('narrative-text');
+
+            // Trigger reflow to restart CSS animations (typewriter/flash)
+            titleEl.classList.remove('flash-text');
+            textEl.classList.remove('typewriter');
+            void titleEl.offsetWidth;
+            void textEl.offsetWidth;
+
+            titleEl.textContent = data.title;
+            textEl.textContent = data.text;
+
+            titleEl.classList.add('flash-text');
+            textEl.classList.add('typewriter');
+        }
+
         animateNumber(document.getElementById('v-conflict'), victims);
         animateNumber(document.getElementById('v-coca'), cocaHa);
         animateNumber(document.getElementById('v-defo'), defoHa);
