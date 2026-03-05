@@ -148,6 +148,16 @@ const ColombiaUI = (() => {
             initLayerToggles();
         },
         updateStats,
+        updateConflictStat(realCount, year) {
+            const el = document.getElementById('v-conflict');
+            animateNumber(el, realCount);
+            // Show LIVE badge on the conflict stat block
+            const badge = document.getElementById('api-live-badge');
+            if (badge) {
+                badge.textContent = '● CNMH en vivo';
+                badge.style.display = 'block';
+            }
+        },
         getCurrentYear: () => currentYear,
     };
 })();

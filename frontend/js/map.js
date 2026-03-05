@@ -177,6 +177,10 @@ const ColombiaMap = (() => {
         },
 
         updateData,
+        updateConflictLayer(geojson) {
+            if (!ready) return;
+            map.getSource('conflict').setData(geojson);
+        },
         toggleLayer,
         isReady: () => ready,
         onReady: (cb) => map.once('layers-ready', cb),
